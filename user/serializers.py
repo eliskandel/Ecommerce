@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import User
-
+from django.contrib.auth.hashers import make_password
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -13,6 +13,11 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+    
+    def update(self, instance, validated_data):
+        if 'password' in validated_data:
+            validated_data['password']=make_password(validated_data['password'])
+        return super().update(instance, validated_data)
 
 class UserRetriveSerializer(serializers.ModelSerializer):
     class Meta:

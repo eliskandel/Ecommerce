@@ -4,11 +4,13 @@ from rest_framework.generics import (
     CreateAPIView,
     UpdateAPIView
 )
-from .models import Product
+from .models import Product,Order
 from .serializer import (
     ProductListSerializer,
     ProductSerializer,
-    ProductWriteSerializer
+    ProductWriteSerializer,
+    OrderSerializer,
+    OrderCreateSerializer
     ) 
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -29,7 +31,7 @@ class ProductDeleteView(DestroyAPIView):
     authentication_classes=[TokenAuthentication]
     
     def get_queryset(self):
-        return Product.objects.filter(seller=self.object.user)
+        return Product.objects.filter(seller=self.request.user)
     
 class ProductCreateView(CreateAPIView):
     serializer_class=ProductWriteSerializer
@@ -46,6 +48,41 @@ class ProductUpdateView(UpdateAPIView):
         return Product.objects.filter(seller=self.request.user)
         
         
+        #Order 
         
         
+class OrderListView(ListAPIView):
+    queryset=Order.objects.all()
+    serializer_class=OrderSerializer
+    permission_classes=[IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
+
+class OrderCreateView(CreateAPIView):
+    serializer_class=OrderCreateSerializer
+    permission_classes=[IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
+
+class OrderDeleteView(DestroyAPIView):
+    queryset=Order.objects.all()
+    serializer_class=OrderSerializer
+    permission_classes=[IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
+
+    def get_queryset(self):
+        return Order.objects.filter(buyer=self.request.user)
+    
+
+
+    
+    
+class OrderUpdateView(UpdateAPIView):
+    queryset=Order.objects.all()
+    serializer_class=OrderSerializer
+    permission_classes=[IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
+
+    def get_queryset(self):
+        return Order.objects.filter(buyer=self.request.user)
+    
+    
         

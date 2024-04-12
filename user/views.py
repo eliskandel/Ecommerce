@@ -75,7 +75,7 @@ class UserDeleteView(DestroyAPIView):
     authentication_classes=[TokenAuthentication]
     
     def get_queryset(self):
-        return User.objects.filter(seller=self.request.user)
+        return User.objects.filter(username=self.request.user)
     
 class UserUpdateView(UpdateAPIView):
     
@@ -85,6 +85,6 @@ class UserUpdateView(UpdateAPIView):
     authentication_classes=[TokenAuthentication]
     
     def get_queryset(self):
-        return User.objects.filter(username=self.request.user)
-    
+        user=User.objects.filter(username=self.request.user)
+        return user
     
