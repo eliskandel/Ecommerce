@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.exceptions import PermissionDenied
 from .models import Product,Order
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -20,13 +21,15 @@ class ProductListSerializer(serializers.ModelSerializer):
 class ProductWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model=Product
-        fields=['name', 'description', 'stock_quantity']
+        fields=['name', 'description', 'stock_quantity','rating']
     
     def create(self, validated_data):
         request=self.context['request']
-        product= Product.objects.create(**validated_data, seller=request.user)
-        return product
-    
+        if request.user.category == "seller":
+            product= Product.objects.create(**validated_data, seller=request.user)
+            return product
+        else:
+            raise PermissionDenied(detail="User is not a seller")
     
     
     
@@ -34,7 +37,13 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model=Order
         fields="__all__"
-    
+    def update(self, instance, validated_data):
+        
+        order=Order.objects.get(buyer=self.user)
+        product= validated_data.pop('product')
+        order.product.remove(product)
+        
+        return super().update(instance, validated_data)
     
         
 class OrderCreateSerializer(serializers.ModelSerializer):
@@ -44,12 +53,10 @@ class OrderCreateSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         request=self.context['request']
-        product_ins=validated_data.pop('product')
-        product=[]
-        for i in product_ins:
-            product.append(i)
         order=Order.objects.create(**validated_data,buyer=request.user)
-        order.product.set(product)
+        for product in order.product.all():
+            order.product.add(product)
+        
         order.save()
         return order
     

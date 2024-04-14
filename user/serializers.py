@@ -9,7 +9,12 @@ class UserSerializer(serializers.ModelSerializer):
         
     def create(self, validated_data):
         password=validated_data.pop('password')
-        user=User.objects.create(**validated_data)
+        user_category=validated_data.get('category')
+        if user_category == "seller":
+            user=User.objects.create(**validated_data)
+        else:
+            user=User.objects.create(**validated_data, category="user")
+
         user.set_password(password)
         user.save()
         return user

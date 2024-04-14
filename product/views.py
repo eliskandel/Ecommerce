@@ -71,10 +71,6 @@ class OrderDeleteView(DestroyAPIView):
     def get_queryset(self):
         return Order.objects.filter(buyer=self.request.user)
     
-
-
-    
-    
 class OrderUpdateView(UpdateAPIView):
     queryset=Order.objects.all()
     serializer_class=OrderSerializer
