@@ -47,6 +47,7 @@ class CartListView(ListAPIView):
     
 class CartUpdateView(UpdateAPIView):
     queryset=Cart.objects.all()
+
     serializer_class=CartSerializer
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
@@ -54,3 +55,7 @@ class CartUpdateView(UpdateAPIView):
     def get_queryset(self):
        return Cart.objects.filter(user=self.request.user)
    
+    
+
+
+

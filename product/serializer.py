@@ -41,8 +41,7 @@ class OrderSerializer(serializers.ModelSerializer):
         
         order=Order.objects.get(buyer=self.user)
         product= validated_data.pop('product')
-        order.product.remove(product)
-        
+        order.product.add(product)
         return super().update(instance, validated_data)
     
         

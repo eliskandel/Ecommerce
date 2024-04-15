@@ -4,15 +4,11 @@ from .models import Cart
 class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model=Cart
-        fields="__all__"
-    
+        fields=['id','user','products']
+
     def update(self, instance, validated_data):
-        request=self.context['request']
-        cart=Cart.objects.get(user=request.user)
-        product=validated_data.pop('product')
         
-        return super.update(instance,validated_data)
-        
+        return super().update(instance, validated_data)
 class CartWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model=Cart
@@ -28,4 +24,7 @@ class CartWriteSerializer(serializers.ModelSerializer):
         cart.save()
         return cart
     
+
+
+   
     
